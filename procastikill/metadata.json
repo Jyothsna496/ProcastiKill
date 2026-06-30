@@ -1,0 +1,6 @@
+{
+  "name": "ProcastiKill",
+  "description": "An elite, urgency-first productivity triage companion with AI daily scheduling, simulated Google Calendar connection, and detailed performance insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

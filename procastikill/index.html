@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProcastiKill — Your AI Productivity Companion</title>
+    
+    <!-- Google Fonts: Poppins (Display), Inter (Body) & Source Serif 4 (Editorial accents) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js CDN for Insights Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Tailwind CSS v3 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Theme Configuration -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              heading: ['Poppins', 'sans-serif'],
+            },
+            colors: {
+              primary: {
+                DEFAULT: '#4F46E5', // Indigo 600
+                hover: '#4338CA',   // Indigo 700
+              },
+              accent: {
+                DEFAULT: '#06B6D4', // Cyan 500
+                hover: '#0891B2',
+                light: '#ECFEFF',
+              },
+              surface: '#FFFFFF',
+              bgLight: '#F8FAFC',
+              borderLight: '#E5E7EB',
+              headingText: '#111827',
+              bodyText: '#374151',
+              secondaryText: '#6B7280',
+              success: {
+                DEFAULT: '#16A34A',
+                light: '#DCFCE7',
+              },
+              warning: {
+                DEFAULT: '#F59E0B',
+                light: '#FEF3C7',
+              },
+              error: {
+                DEFAULT: '#DC2626',
+                light: '#FEE2E2',
+              }
+            },
+            boxShadow: {
+              card: '0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 8px -1px rgba(0, 0, 0, 0.03)',
+              fancy: '0 10px 25px -5px rgba(79, 70, 229, 0.05), 0 8px 16px -6px rgba(79, 70, 229, 0.03)',
+              nav: '0 4px 12px rgba(79, 70, 229, 0.03)',
+            }
+          }
+        }
+      }
+    </script>
+    
+    <style>
+      html, body {
+        min-height: 100%;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        background-color: #F8FAFC;
+        color: #374151; /* Body Text #374151 */
+        overflow-x: hidden;
+      }
+      .font-heading {
+        font-family: 'Poppins', sans-serif;
+      }
+      
+      /* Standardized theme utilities */
+      .card-style {
+        background-color: #FFFFFF;
+        border: 1px solid #E5E7EB; /* Light gray border #E5E7EB */
+        border-radius: 20px; /* Border radius 20px */
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 8px -1px rgba(0, 0, 0, 0.03); /* Soft shadow */
+        padding: 1.25rem; /* 20px card padding */
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .card-style:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px -5px rgba(79, 70, 229, 0.08), 0 4px 12px -5px rgba(79, 70, 229, 0.03); /* Soft Indigo Hover shadow */
+      }
+      
+      .btn-primary {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        background-color: #4F46E5; /* Background #4F46E5 */
+        color: #FFFFFF;
+        padding: 0 1.5rem;
+        height: 50px; /* Button heights 48-56px */
+        border-radius: 16px; /* Radius 16px */
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+        font-size: 16px; /* Buttons 16px Medium */
+        border: none;
+      }
+      .btn-primary:hover {
+        background-color: #4338CA; /* Hover #4338CA */
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+      .btn-primary:disabled {
+        background-color: #94A3B8;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      
+      .btn-secondary {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        background-color: #FFFFFF; /* White background */
+        color: #4F46E5; /* Text #4F46E5 */
+        border: 2px solid #4F46E5; /* Border #4F46E5 */
+        padding: 0 1.5rem;
+        height: 50px; /* Heights 48-56px */
+        border-radius: 16px; /* Radius 16px */
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .btn-secondary:hover {
+        background-color: #EEF2FF; /* Soft Indigo background on hover */
+        color: #4338CA;
+        border-color: #4338CA;
+      }
+      
+      .input-field {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background-color: #FFFFFF; /* White background */
+        border: 1px solid #D1D5DB; /* Border #D1D5DB */
+        border-radius: 14px; /* Radius 14px */
+        font-size: 16px; /* Body 16px Regular */
+        color: #111827; /* Heading Text */
+        outline: none;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .input-field:focus {
+        border-color: #4F46E5; /* Focus ring #4F46E5 */
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+      }
+      .input-field::placeholder {
+        color: #94A3B8;
+      }
+
+      /* Custom Label styling as specified */
+      .label-style {
+        display: block;
+        color: #3730A3; /* Darker Indigo (Indigo-800) for better contrast */
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600; /* SemiBold */
+        font-size: 13px; /* Slightly larger, 13px SemiBold */
+        margin-bottom: 0.625rem; /* Better spacing */
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      
+      /* Status dot pulsing indicator */
+      .status-dot-pulse {
+        position: relative;
+        display: inline-block;
+        width: 0.625rem;
+        height: 0.625rem;
+        border-radius: 9999px;
+      }
+      .status-dot-pulse::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 9999px;
+        animation: pulse-ring 2s cubic-bezier(0.215, 0.610, 0.355, 1) infinite;
+        background-color: inherit;
+      }
+      @keyframes pulse-ring {
+        0% {
+          transform: scale(0.95);
+          opacity: 0.85;
+        }
+        50% {
+          opacity: 0.25;
+        }
+        100% {
+          transform: scale(1.8);
+          opacity: 0;
+        }
+      }
+
+      /* Custom Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in {
+        animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      
+      /* Clean scrollbars */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #CBD5E1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94A3B8;
+      }
+    </style>
+  </head>
+  <body class="bg-bgLight text-bodyText antialiased min-h-screen flex flex-col overflow-x-hidden relative">
+
+    <header class="bg-white border-b border-borderLight shadow-sm px-6 py-3 flex flex-col md:flex-row items-center justify-between gap-4 sticky top-0 z-40">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl leading-none">🧠</span>
+        <div>
+          <h1 class="text-xl font-bold text-headingText tracking-tight font-heading">
+            ProcastiKill
+          </h1>
+          <p class="text-[11px] text-secondaryText leading-tight">Your AI Productivity Companion</p>
+        </div>
+      </div>
+      
+      <!-- Navigation Tabs (Active tab: Indigo, Inactive: gray text, hover effects, overflow-safe) -->
+      <nav class="flex items-center bg-slate-100 p-1 rounded-[16px] gap-1 shadow-inner max-w-full overflow-x-auto whitespace-nowrap scrollbar-none">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-4 py-2 rounded-[12px] font-medium text-xs md:text-sm transition-all duration-200 flex items-center gap-2">
+          <i class="fa-solid fa-bolt text-xs"></i> Dashboard
+        </button>
+        <button onclick="switchTab('calendar')" id="tab-calendar" class="px-4 py-2 rounded-[12px] font-medium text-xs md:text-sm transition-all duration-200 flex items-center gap-2">
+          <i class="fa-solid fa-calendar text-xs"></i> Calendar
+        </button>
+        <button onclick="switchTab('habits')" id="tab-habits" class="px-4 py-2 rounded-[12px] font-medium text-xs md:text-sm transition-all duration-200 flex items-center gap-2">
+          <i class="fa-solid fa-bullseye text-xs"></i> Habits
+        </button>
+        <button onclick="switchTab('insights')" id="tab-insights" class="px-4 py-2 rounded-[12px] font-medium text-xs md:text-sm transition-all duration-200 flex items-center gap-2">
+          <i class="fa-solid fa-chart-line text-xs"></i> 📈 AI Insights
+        </button>
+      </nav>
+
+      <!-- Global Stats & Controls -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 bg-slate-50 border border-borderLight px-4 py-2 rounded-[14px]">
+          <div class="flex items-center gap-1.5 text-warning font-semibold text-sm">
+            <i class="fa-solid fa-fire"></i>
+            <span id="global-streak">4</span> Days
+          </div>
+          <div class="w-px h-4 bg-borderLight"></div>
+          <div class="flex items-center gap-1.5 text-primary font-semibold text-sm">
+            <i class="fa-solid fa-trophy"></i>
+            <span id="global-score">1400</span> XP
+          </div>
+        </div>
+        
+        <!-- Gemini Status Indicator -->
+        <div id="api-status" class="flex items-center gap-1.5 text-xs text-secondaryText px-2.5 py-2 bg-slate-50 border border-borderLight rounded-[14px] shadow-sm">
+          <span class="w-2.5 h-2.5 rounded-full bg-error" id="api-status-dot"></span>
+          <span id="api-status-label" class="font-medium">Local Heuristic</span>
+        </div>
+
+        <!-- Toggle Voice Notifications -->
+        <button onclick="toggleVoiceAlerts()" id="btn-voice-alerts" title="Toggle Voice Alerts" class="w-10 h-10 rounded-xl border border-borderLight flex items-center justify-center text-secondaryText hover:text-primary hover:border-primary transition-all duration-200 bg-white shadow-sm">
+          <i id="voice-alert-icon" class="fa-solid fa-volume-xmark"></i>
+        </button>
+
+        <!-- Restart Demo Mode -->
+        <button onclick="window.enterDemoMode(true)" title="Start Scenario Demo" class="h-10 px-3 gap-1.5 rounded-xl border border-indigo-200 text-indigo-600 hover:text-indigo-700 hover:border-indigo-400 transition-all duration-200 bg-indigo-50/50 shadow-sm flex items-center font-bold text-xs cursor-pointer">
+          <span class="text-base">🎯</span> Demo Mode
+        </button>
+
+        <!-- Settings Cog (Modal setting) -->
+        <button onclick="openSettingsModal()" title="API Settings" class="w-10 h-10 rounded-xl border border-borderLight flex items-center justify-center text-secondaryText hover:text-primary hover:border-primary transition-all duration-200 bg-white shadow-sm">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-[1400px] w-full mx-auto px-6 py-6">
+
+      <!-- Demo Mode Alert Banner -->
+      <div id="demo-mode-banner" class="hidden bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mb-5 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl leading-none">🎯</span>
+          <div>
+            <h4 class="text-sm font-bold text-indigo-950 font-heading">ProcastiKill Demo Scenario Mode Active</h4>
+            <p class="text-xs text-indigo-800">Simulating a high-stakes student scenario with three competing deadlines and active AI triage reasoning.</p>
+          </div>
+        </div>
+        <button onclick="window.exitDemoMode()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2 px-4 rounded-xl shadow-sm transition-all cursor-pointer">
+          Exit Demo Mode
+        </button>
+      </div>
+
+      <!-- ==================================================
+           PAGE 1: DASHBOARD VIEW
+           ================================================== -->
+      <section id="view-dashboard" class="space-y-5 animate-fade-in w-full">
+        
+        <!-- PROACTIVE AI AGENT HUB CONTAINER (Today's AI Brief, Recommendations, Risk, Observations, Welcome) -->
+        <div id="ai-agent-hub-container" class="space-y-5">
+          <!-- Dynamically populated on load -->
+        </div>
+        
+        <!-- ROW 1: 5/7 Grid (Left 41.6% - Triage, Right 58.3% - AI Planner & Upcoming Deadline) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          
+          <!-- Row 1 Left: AI Task Planner -->
+          <div class="lg:col-span-5 flex flex-col">
+            <div class="card-style flex-1 flex flex-col justify-between p-5 rounded-[20px] bg-white shadow-sm border border-borderLight">
+              <div>
+                <div class="flex flex-col gap-1 mb-4 border-b border-borderLight pb-3">
+                  <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-accent"></i>
+                    <h3 class="text-lg font-bold font-heading text-headingText">AI Task Planner</h3>
+                  </div>
+                  <p class="text-xs text-secondaryText">Describe your task and let AI create the fastest path to completion.</p>
+                </div>
+                
+                <form id="crisis-triage-form" onsubmit="window.triageNewCrisis(event)" class="space-y-5">
+                  <!-- Crisis Title -->
+                  <div>
+                    <label class="label-style">Task Details</label>
+                    <input type="text" id="crisis-title" required placeholder="e.g. Database Systems Assignment" 
+                      class="input-field bg-white border border-gray-300">
+                  </div>
+
+                  <!-- Describe / Panic Textarea -->
+                  <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                      <label class="label-style !mb-0">Panic Details & Criteria</label>
+                      <button type="button" onclick="window.toggleDictation()" id="btn-voice-input" class="text-[11px] border border-borderLight px-2 py-0.5 rounded-md flex items-center gap-1.5 text-secondaryText hover:text-red-600 hover:border-red-300 transition-all bg-white shadow-sm font-medium">
+                        <i id="voice-input-icon" class="fa-solid fa-microphone text-xs"></i> Voice Panic
+                      </button>
+                    </div>
+                    <textarea id="crisis-desc" rows="3" required placeholder="Describe what you are dreading, critical items, and what you need to achieve..."
+                      class="input-field bg-white border border-gray-300"></textarea>
+                  </div>
+
+                  <!-- Context Dropdowns -->
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="label-style">Your Persona</label>
+                      <select id="crisis-persona" class="input-field cursor-pointer bg-white border border-gray-300">
+                        <option value="Overworked Dev/Engineer">Overworked Dev</option>
+                        <option value="Desperate Student">Desperate Student</option>
+                        <option value="Polite Contractor">Polite Contractor</option>
+                        <option value="Hustling Founder">Hustling Founder</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="label-style">Recipient Profile</label>
+                      <select id="crisis-recipient" class="input-field cursor-pointer bg-white border border-gray-300">
+                        <option value="Micromanaging Boss">Micromanaging Boss</option>
+                        <option value="Harsh Professor">Harsh Professor</option>
+                        <option value="High-Value Client">High-Value Client</option>
+                        <option value="Support & Billing">Support & Billing</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Datetime-local exact calendar input -->
+                  <div>
+                    <label class="label-style">Deadline</label>
+                    <input type="datetime-local" id="crisis-deadline"
+                      class="input-field bg-white border border-gray-300">
+                  </div>
+
+                  <!-- Hours Until Doom Slider -->
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <label class="label-style !mb-0">Hours Remaining</label>
+                      <span id="label-hours-doom" class="text-sm font-bold text-error">4 Hours</span>
+                    </div>
+                    <input type="range" id="crisis-hours" min="1" max="24" value="4" 
+                      class="w-full accent-accent cursor-pointer mt-2">
+                    <div class="flex justify-between items-center mt-2">
+                      <span class="text-[10px] text-secondaryText font-medium font-mono">1 Hour</span>
+                      <span id="calibrator-urgency-pills" class="text-[10px] px-2.5 py-0.5 font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">Severe Action Zone</span>
+                      <span class="text-[10px] text-secondaryText font-medium font-mono">24 Hours</span>
+                    </div>
+                  </div>
+
+                  <!-- Submit button -->
+                  <button type="submit" id="btn-triage-submit" class="btn-primary w-full">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Triage Crisis & Generate Plan
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Row 1 Right: AI Daily Planner & Upcoming Deadline stacked -->
+          <div class="lg:col-span-7 flex flex-col gap-5 justify-between">
+            
+            <!-- ✨ AI Daily Planner (Today's Schedule) -->
+            <div class="card-style flex-1 flex flex-col justify-between p-5 rounded-[20px] bg-white shadow-sm border border-borderLight">
+              <div>
+                <div class="flex items-start justify-between mb-4 border-b border-borderLight pb-3 gap-2">
+                  <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-2">
+                      <span class="text-xl">✨</span>
+                      <h3 class="text-base font-bold font-heading text-headingText">✨ AI Daily Planner</h3>
+                    </div>
+                    <p class="text-xs text-secondaryText">Generate your daily schedule mapped around busy calendar periods.</p>
+                  </div>
+                  <button onclick="window.generateMyDailySchedule()" id="btn-generate-day" class="btn-primary text-xs py-1.5 px-3 whitespace-nowrap">
+                    <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i> Generate My Day
+                  </button>
+                </div>
+
+                <!-- Timeline list container / Today's Schedule -->
+                <div id="timeline-list-container" class="space-y-3 relative before:absolute before:left-8 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100 max-h-[280px] overflow-y-auto pr-1">
+                  <!-- Populated by schedule planner -->
+                  <div class="text-center py-6 text-secondaryText text-sm">
+                    <i class="fa-solid fa-calendar-day text-2xl mb-2 text-slate-300 block"></i>
+                    No schedule generated yet. Click "Generate My Day" to map out your tasks around busy periods.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Copy/Download action panel -->
+              <div id="timeline-actions-panel" class="hidden mt-4 pt-4 border-t border-borderLight flex items-center justify-end gap-2">
+                <button onclick="window.copyScheduleToClipboard()" class="btn-secondary text-xs py-1.5 px-3">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+                <button onclick="window.downloadScheduleFile()" class="btn-secondary text-xs py-1.5 px-3">
+                  <i class="fa-regular fa-floppy-disk"></i> Download
+                </button>
+              </div>
+            </div>
+
+            <!-- Upcoming Deadline card -->
+            <div class="card-style p-5 rounded-[20px] bg-white shadow-sm border border-borderLight">
+              <div class="mb-4 border-b border-borderLight pb-3">
+                <h4 class="text-base font-bold font-heading text-headingText flex items-center gap-2">
+                  <i class="fa-solid fa-list-ol text-accent"></i> Upcoming Deadlines
+                </h4>
+                <p class="text-xs text-secondaryText mt-1">Keep track of your chronological schedule and delivery targets.</p>
+              </div>
+              <div id="upcoming-deadlines-list" class="space-y-3 max-h-[160px] overflow-y-auto pr-1">
+                <!-- Deadlines sorted soonest-first loaded dynamically -->
+                <div class="p-4 text-center text-sm text-secondaryText italic bg-slate-50 border border-dashed border-borderLight rounded-[16px]">
+                  No upcoming deadlines scheduled.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ROW 2: 5/7 Grid (Left 41.6% - Sprint Roadmap, Right 58.3% - AI Coach & Focus Sounds) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          
+          <!-- Row 2 Left: Sprint Roadmap -->
+          <div class="lg:col-span-5 flex flex-col gap-5 justify-between">
+            
+            <!-- Horizontal Crisis Queue Pillbox Grid -->
+            <div class="card-style p-4 rounded-[20px] bg-white shadow-sm border border-borderLight">
+              <div class="mb-2">
+                <label class="label-style !mb-0">Active Tasks</label>
+                <p class="text-[11px] text-secondaryText mt-0.5">Quickly toggle between your active task roadmaps.</p>
+              </div>
+              <div id="crises-pills-container" class="flex flex-wrap items-center gap-2">
+                <!-- Crisis pills load here -->
+              </div>
+            </div>
+
+            <!-- Active Crisis Details (Panic HUD & Sprints) -->
+            <div id="active-crisis-hud" class="flex-1 flex flex-col gap-5 justify-between">
+              
+              <!-- Panic HUD Indicator -->
+              <div class="card-style flex-1 flex flex-col justify-between p-5 rounded-[20px] bg-white shadow-sm border border-borderLight">
+                <div>
+                  <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    
+                    <!-- Circular Ring Gauge -->
+                    <div class="flex items-center gap-4">
+                      <div class="relative w-24 h-24 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90">
+                          <!-- background circle -->
+                          <circle cx="48" cy="48" r="40" stroke="#F1F5F9" stroke-width="6" fill="transparent" />
+                          <!-- animated progress ring -->
+                          <circle cx="48" cy="48" r="40" id="hud-progress-circle" stroke="#4F46E5" stroke-width="6" fill="transparent" 
+                            stroke-dasharray="251" stroke-dashoffset="125" stroke-linecap="round" class="transition-all duration-1000" />
+                        </svg>
+                        <!-- Icon center -->
+                        <div class="absolute text-primary text-lg font-bold flex flex-col items-center">
+                          <i class="fa-solid fa-stopwatch text-accent"></i>
+                        </div>
+                      </div>
+                      <div>
+                        <span id="hud-panic-badge" class="px-2.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider">Critical Urgency</span>
+                        <h3 id="hud-title" class="text-base font-bold font-heading text-headingText mt-1.5 leading-tight">Database Systems Assignment</h3>
+                        <p id="hud-countdown-text" class="text-xs font-semibold text-secondaryText mt-0.5 font-mono">4h 00m 00s left</p>
+                      </div>
+                    </div>
+
+                    <!-- SVG Plot Index Chart -->
+                    <div class="border border-borderLight rounded-lg p-2 bg-slate-50 flex flex-col items-center gap-1">
+                      <span class="text-[8px] uppercase font-bold text-secondaryText tracking-wider font-heading">Panic Index Reduction</span>
+                      <svg class="w-24 h-11" viewBox="0 0 110 90">
+                        <rect width="110" height="90" fill="transparent" />
+                        <!-- grid rules -->
+                        <line x1="10" y1="10" x2="100" y2="10" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="2,2" />
+                        <line x1="10" y1="45" x2="100" y2="45" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="2,2" />
+                        <line x1="10" y1="80" x2="100" y2="80" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="2,2" />
+                        
+                        <!-- Line chart path -->
+                        <path id="panic-svg-line" d="M10,80 L35,50 L65,25 L100,10" fill="none" stroke="#4F46E5" stroke-width="2.5" stroke-linecap="round" />
+                        
+                        <!-- marker points -->
+                        <circle cx="10" cy="80" r="3" fill="#4F46E5" />
+                        <circle cx="35" cy="50" r="3" fill="#4F46E5" />
+                        <circle cx="65" cy="25" r="3" fill="#4F46E5" />
+                        <circle cx="100" cy="10" r="3" fill="#4F46E5" />
+                      </svg>
+                      <span class="text-[8px] text-secondaryText italic">Drop path on tasks complete</span>
+                    </div>
+
+                  </div>
+
+                  <!-- Tough Love Coach Corner Statement -->
+                  <div class="mt-4 p-4 bg-slate-50 border-l-4 border-l-[#0F172A] rounded-r-lg text-xs text-bodyText italic relative leading-relaxed font-serif-aesthetic">
+                    <i class="fa-solid fa-quote-left text-slate-200 text-2xl absolute -top-1 left-2 opacity-50"></i>
+                    <p id="hud-motivation-quote" class="relative z-10 pl-3 font-medium">"Listen up, Overworked Dev. You have exactly 4 hours before Micromanaging Boss cuts your funding. Sprint 1 should have been done yesterday. Drop the coffee and code!"</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI Action Plan List -->
+              <div class="card-style flex-1 flex flex-col justify-between p-5 rounded-[20px] bg-white shadow-sm border border-borderLight">
+                <div>
+                  <div class="flex items-start justify-between mb-4 border-b border-borderLight pb-3 gap-2">
+                    <div class="flex flex-col gap-1">
+                      <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-route text-accent"></i>
+                        <h3 class="text-base font-bold font-heading text-headingText">AI Action Plan</h3>
+                      </div>
+                      <p class="text-xs text-secondaryText">Structured, bite-sized execution steps designed to beat procrastination.</p>
+                    </div>
+                    <button onclick="window.toggleNotifications()" class="btn-secondary text-xs h-[32px] px-3 whitespace-nowrap">
+                      <i class="fa-regular fa-bell"></i> Enable Alerts
+                    </button>
+                  </div>
+
+                  <!-- Roadmap Cards Container -->
+                  <div id="sprints-cards-container" class="space-y-4 max-h-[220px] overflow-y-auto pr-1">
+                    <!-- Calculated sprints injection -->
+                  </div>
+                </div>
+
+                <!-- Tactical Status tracker bottom bar -->
+                <div class="mt-4 pt-4 border-t border-borderLight">
+                  <div class="flex justify-between items-center text-xs font-semibold text-secondaryText mb-2 font-heading">
+                    <span id="tracker-progress-text">Completed Sprints: 0 / 3</span>
+                    <span class="text-accent font-bold">+100 XP per check</span>
+                  </div>
+                  <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="tracker-progress-bar" class="w-0 h-full bg-[#0F172A] transition-all duration-500 rounded-full shadow-inner"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Why I Chose This Plan reasoning card -->
+              <div id="ai-plan-reasoning-container"></div>
+
+            </div>
+
+          </div>
+
+          <!-- Row 2 Right: AI Coach & Ambient Focus Sounds -->
+          <div class="lg:col-span-7 flex flex-col justify-between gap-5">
+            
+            <!-- Focus Sound Modulator & Chat -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 flex-1 items-stretch">
+              
+              <!-- Focus Mode -->
+              <div class="card-style flex flex-col justify-between flex-1 p-5 rounded-[20px] bg-white shadow-sm border border-borderLight">
+                <div>
+                  <div class="flex flex-col gap-1 mb-4 border-b border-borderLight pb-3">
+                    <div class="flex items-center gap-2">
+                      <i class="fa-solid fa-headphones text-accent"></i>
+                      <h3 class="label-style !mb-0 text-sm font-bold text-headingText">Focus Mode</h3>
+                    </div>
+                    <p class="text-xs text-secondaryText">Stay in the zone with ambient sounds.</p>
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <!-- Cyber Focus -->
+                    <button id="sound-cyber" onclick="window.startAmbientSound('cyber')" class="w-full flex items-center justify-between px-3.5 py-2.5 bg-white border border-borderLight rounded-lg hover:border-accent transition-all duration-200 text-xs font-medium text-bodyText shadow-sm relative overflow-hidden group">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-wave-square text-accent group-hover:scale-110 transition-all"></i> Cyber Focus Hum (55Hz)</span>
+                      <span id="dot-cyber" class="w-2 h-2 rounded-full bg-cyan-400 animate-ping hidden"></span>
+                    </button>
+                    <!-- Binaural Gamma -->
+                    <button id="sound-binaural" onclick="window.startAmbientSound('binaural')" class="w-full flex items-center justify-between px-3.5 py-2.5 bg-white border border-borderLight rounded-lg hover:border-accent transition-all duration-200 text-xs font-medium text-bodyText shadow-sm relative overflow-hidden group">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-lines-leaning text-accent group-hover:scale-110 transition-all"></i> Binaural Gamma Beat (40Hz)</span>
+                      <span id="dot-binaural" class="w-2 h-2 rounded-full bg-cyan-400 animate-ping hidden"></span>
+                    </button>
+                    <!-- Cosmic Drone -->
+                    <button id="sound-cosmic" onclick="window.startAmbientSound('cosmic')" class="w-full flex items-center justify-between px-3.5 py-2.5 bg-white border border-borderLight rounded-lg hover:border-accent transition-all duration-200 text-xs font-medium text-bodyText shadow-sm relative overflow-hidden group">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-user-astronaut text-accent group-hover:scale-110 transition-all"></i> Cosmic Breathing Drone</span>
+                      <span id="dot-cosmic" class="w-2 h-2 rounded-full bg-cyan-400 animate-ping hidden"></span>
+                    </button>
+                    <!-- White Rain -->
+                    <button id="sound-rain" onclick="window.startAmbientSound('rain')" class="w-full flex items-center justify-between px-3.5 py-2.5 bg-white border border-borderLight rounded-lg hover:border-accent transition-all duration-200 text-xs font-medium text-bodyText shadow-sm relative overflow-hidden group">
+                      <span class="flex items-center gap-2"><i class="fa-solid fa-cloud-showers-heavy text-accent group-hover:scale-110 transition-all"></i> Modulated White Rain</span>
+                      <span id="dot-rain" class="w-2 h-2 rounded-full bg-cyan-400 animate-ping hidden"></span>
+                    </button>
+                  </div>
+                </div>
+
+                <button onclick="window.stopAmbientSound()" class="mt-4 w-full border border-red-200 hover:bg-red-50 text-error hover:text-red-700 font-semibold py-2 rounded-lg transition-all text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                  <i class="fa-solid fa-circle-stop"></i> Silence Drone
+                </button>
+              </div>
+
+              <!-- Tough Love AI Productivity Coach Chat Panel -->
+              <div class="card-style flex flex-col justify-between flex-1 p-5 rounded-[20px] bg-white shadow-sm border border-borderLight">
+                <div>
+                  <div class="flex flex-col gap-1 mb-3 border-b border-borderLight pb-2">
+                    <div class="flex items-center gap-2">
+                      <i class="fa-regular fa-comments text-accent"></i>
+                      <h3 class="label-style !mb-0 text-sm font-bold text-headingText">AI Productivity Coach</h3>
+                    </div>
+                    <p class="text-xs text-secondaryText">Personalized guidance to keep you moving.</p>
+                  </div>
+
+                  <!-- Feed -->
+                  <div id="coach-chat-feed" class="flex-1 overflow-y-auto space-y-3 p-1 flex flex-col max-h-[220px] scrollbar-thin scrollbar-thumb-slate-200">
+                    <!-- Messages populated by script -->
+                  </div>
+                </div>
+
+                <!-- Input area -->
+                <div class="mt-3 flex gap-2">
+                  <input type="text" id="coach-chat-input" placeholder="Ask a question..."
+                    onkeydown="if(event.key==='Enter') window.sendCoachMessage()"
+                    class="input-field py-1.5 px-3 text-xs flex-1 bg-white border border-gray-300">
+                  <button onclick="window.sendCoachMessage()" class="btn-primary py-1.5 px-3.5 text-xs h-[38px] rounded-xl self-end flex items-center justify-center">
+                    Send
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ROW 3: 5/7 Grid (Left 41.6% - Communication Draft, Right 58.3% - Productivity Insights with KPIs + bullets) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          
+          <!-- Row 3 Left: Communication Draft -->
+          <div class="lg:col-span-5 flex flex-col">
+            <!-- Buy-More-Time Letter styled draft card -->
+            <div class="bg-[#FAF7F0] rounded-[20px] border border-[#D8D2C4] shadow-sm p-5 transition-all duration-300 hover:shadow-fancy flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 border-b border-[#D8D2C4] pb-3">
+                  <div class="flex flex-col gap-1 text-[#0F172A]">
+                    <div class="flex items-center gap-2">
+                      <i class="fa-regular fa-envelope"></i>
+                      <h3 class="text-base font-bold font-heading text-[#0F172A]">AI Message Generator</h3>
+                    </div>
+                    <p class="text-xs text-slate-600">Need more time? Generate a professional message instantly.</p>
+                  </div>
+                  <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="window.copyDraftToClipboard()" class="btn-secondary text-xs h-[32px] px-3 border-[#D8D2C4] hover:bg-slate-50 flex-1 sm:flex-none">
+                      <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                    <button onclick="window.downloadFullTriagePlan()" class="btn-secondary text-xs h-[32px] px-3 border-[#D8D2C4] hover:bg-slate-50 flex-1 sm:flex-none">
+                      <i class="fa-solid fa-file-arrow-down"></i> Export
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Typewritten letter styled background -->
+                <div class="p-4 bg-white border border-[#E5E0D5] rounded-xl font-serif-aesthetic text-slate-800 text-xs whitespace-pre-line leading-relaxed shadow-inner max-h-[220px] overflow-y-auto pr-1">
+                  <div id="payload-draft-text">Generative draft payload loading... Describe and calibrate your crisis to begin.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3 Right: AI Insights -->
+          <div class="lg:col-span-7 flex flex-col">
+            <div class="card-style flex-1 flex flex-col justify-between p-5 rounded-[20px] bg-white shadow-sm border border-borderLight">
+              <div>
+                <div class="flex items-start justify-between mb-4 border-b border-borderLight pb-3 gap-2">
+                  <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-2">
+                      <i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
+                      <h3 class="text-base font-bold font-heading text-headingText">📈 AI Insights</h3>
+                    </div>
+                    <p class="text-xs text-secondaryText">Real-time behavior telemetry and customized execution analysis.</p>
+                  </div>
+                  <div class="text-[10px] text-secondaryText uppercase tracking-wider font-bold bg-indigo-50 text-primary border border-indigo-100 px-2.5 py-0.5 rounded-full whitespace-nowrap">Real-time Telemetry</div>
+                </div>
+
+                <!-- Embedded Compact KPI Summary Block -->
+                <div class="grid grid-cols-4 gap-3 mb-4">
+                  <div class="bg-slate-50 border border-borderLight rounded-xl p-2.5 text-center">
+                    <span class="text-[9px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Completion</span>
+                    <div class="text-base font-bold font-heading text-primary mt-1" id="dash-kpi-today-completion">75%</div>
+                  </div>
+                  <div class="bg-slate-50 border border-borderLight rounded-xl p-2.5 text-center">
+                    <span class="text-[9px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Weekly</span>
+                    <div class="text-base font-bold font-heading text-success mt-1" id="dash-kpi-weekly-total">14</div>
+                  </div>
+                  <div class="bg-slate-50 border border-borderLight rounded-xl p-2.5 text-center">
+                    <span class="text-[9px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Streak</span>
+                    <div class="text-base font-bold font-heading text-warning mt-1" id="dash-kpi-streak">4 Days</div>
+                  </div>
+                  <div class="bg-slate-50 border border-borderLight rounded-xl p-2.5 text-center">
+                    <span class="text-[9px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Habits</span>
+                    <div class="text-base font-bold font-heading text-success mt-1" id="dash-kpi-habit-consistency">83%</div>
+                  </div>
+                </div>
+
+                <div id="insights-bullets-container" class="space-y-3 max-h-[160px] overflow-y-auto pr-1">
+                  <!-- Bullet cards loaded from stats analyzer dynamically -->
+                  <div class="flex items-center justify-center py-4 text-secondaryText text-sm animate-pulse">
+                    <i class="fa-solid fa-spinner animate-spin mr-2"></i> Analyzing your performance stats...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ==================================================
+           PAGE 2: CALENDAR VIEW
+           ================================================== -->
+      <section id="view-calendar" class="hidden space-y-6 animate-fade-in">
+        
+        <!-- Monthly Grid Header -->
+        <div class="card-style">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <h3 class="text-lg font-bold font-heading text-headingText flex items-center gap-2">
+              <i class="fa-regular fa-calendar-days text-accent"></i> June 2026 Deadlines
+            </h3>
+            <div class="flex items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-start">
+              <button class="w-9 h-9 border border-borderLight rounded-lg flex items-center justify-center text-secondaryText hover:text-primary hover:border-primary transition-all bg-white shadow-sm"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+              <span id="calendar-month-year" class="font-bold text-sm text-headingText font-heading px-4">June 2026</span>
+              <button class="w-9 h-9 border border-borderLight rounded-lg flex items-center justify-center text-secondaryText hover:text-primary hover:border-primary transition-all bg-white shadow-sm"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+            </div>
+          </div>
+
+          <!-- Calendar Grid layout (7 cols, sun-sat) -->
+          <div id="calendar-grid" class="grid grid-cols-7 gap-2">
+            <!-- Populated by script -->
+          </div>
+        </div>
+
+        <!-- FEATURE 2: GOOGLE CALENDAR PROTOTYPE HUB -->
+        <div class="card-style">
+          <div class="flex flex-col gap-1 mb-4 border-b border-borderLight pb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-network-wired text-accent"></i>
+              <h3 class="text-base font-bold font-heading text-headingText">Smart Calendar</h3>
+            </div>
+            <p class="text-xs text-secondaryText">Sync your schedules to block out busy periods and automate distraction-free sprint windows.</p>
+          </div>
+          
+          <div id="gcal-connection-status" class="bg-slate-50 border border-borderLight rounded-xl p-5">
+            <!-- Replaced dynamically when Google Calendar Connect is clicked -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================================================
+           PAGE 3: HABITS VIEW
+           ================================================== -->
+      <section id="view-habits" class="hidden space-y-6 animate-fade-in">
+        
+        <!-- Add custom daily routine habit -->
+        <div class="card-style">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-indigo-50 text-accent rounded-lg flex items-center justify-center text-base shadow-sm">
+                <i class="fa-solid fa-plus"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-bold font-heading text-headingText">Daily Routine Habits</h3>
+                <p class="text-xs text-secondaryText mt-0.5">Integrate habits into your schedule to build focus scores and streaks.</p>
+              </div>
+            </div>
+            
+            <div class="flex gap-2 w-full md:w-auto self-stretch md:self-auto">
+              <input type="text" id="new-habit-name" placeholder="e.g. Read Documentation for 15 mins"
+                class="input-field py-2 text-xs flex-1 md:w-64">
+              <button onclick="window.addCustomHabit()" class="btn-primary py-2 px-4 text-xs whitespace-nowrap">
+                <i class="fa-solid fa-plus text-[10px]"></i> Add Habit
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Habits Logs Row Grid -->
+        <div id="habits-list-container" class="space-y-4">
+          <!-- Populated by script -->
+        </div>
+
+      </section>
+
+      <!-- ==================================================
+           PAGE 4: FEATURE 3 PRODUCTIVITY INSIGHTS TAB
+           ================================================== -->
+      <section id="view-insights" class="hidden space-y-6 animate-fade-in">
+        
+        <!-- Core insights KPI cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+          
+          <!-- Today's Completion -->
+          <div class="card-style p-4 text-center flex flex-col justify-between hover:shadow-fancy">
+            <span class="text-[10px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Today's Rate</span>
+            <div class="text-xl font-bold font-heading text-primary my-2" id="kpi-today-completion">75%</div>
+            <span class="text-[9px] text-secondaryText italic block">Goal completed</span>
+          </div>
+
+          <!-- Weekly total -->
+          <div class="card-style p-4 text-center flex flex-col justify-between hover:shadow-fancy">
+            <span class="text-[10px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Weekly Sprints</span>
+            <div class="text-xl font-bold font-heading text-success my-2" id="kpi-weekly-total">14</div>
+            <span class="text-[9px] text-secondaryText italic block">Active sessions</span>
+          </div>
+
+          <!-- Focus time sum -->
+          <div class="card-style p-4 text-center flex flex-col justify-between hover:shadow-fancy">
+            <span class="text-[10px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Focus Time</span>
+            <div class="text-xl font-bold font-heading text-accent my-2" id="kpi-focus-minutes">180 M</div>
+            <span class="text-[9px] text-secondaryText italic block">Aggregate minutes</span>
+          </div>
+
+          <!-- Streak Day -->
+          <div class="card-style p-4 text-center flex flex-col justify-between hover:shadow-fancy">
+            <span class="text-[10px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Daily Streak</span>
+            <div class="text-xl font-bold font-heading text-warning my-2" id="kpi-streak">4 Days</div>
+            <span class="text-[9px] text-secondaryText italic block">Days active row</span>
+          </div>
+
+          <!-- Avg sprint length -->
+          <div class="card-style p-4 text-center flex flex-col justify-between hover:shadow-fancy">
+            <span class="text-[10px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Avg Duration</span>
+            <div class="text-xl font-bold font-heading text-headingText my-2" id="kpi-avg-duration">45 M</div>
+            <span class="text-[9px] text-secondaryText italic block">Minutes per sprint</span>
+          </div>
+
+          <!-- Most productive day -->
+          <div class="card-style p-4 text-center flex flex-col justify-between hover:shadow-fancy">
+            <span class="text-[10px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Peak Output</span>
+            <div class="text-sm font-bold font-heading text-accent my-2.5 truncate" id="kpi-peak-day">Tuesday</div>
+            <span class="text-[9px] text-secondaryText italic block">Sprints threshold</span>
+          </div>
+
+          <!-- Habit logs completed % -->
+          <div class="card-style p-4 text-center flex flex-col justify-between hover:shadow-fancy">
+            <span class="text-[10px] font-bold text-secondaryText uppercase tracking-wider block font-heading">Habits Rate</span>
+            <div class="text-xl font-bold font-heading text-success my-2" id="kpi-habit-consistency">83%</div>
+            <span class="text-[9px] text-secondaryText italic block">Habits consistency</span>
+          </div>
+
+        </div>
+
+        <!-- Interactive charts grid (using Chart.js CDN) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Weekly Completed Sprints Chart -->
+          <div class="card-style min-h-[300px] flex flex-col">
+            <span class="text-xs font-bold text-headingText font-heading mb-4 block flex items-center gap-1.5 uppercase tracking-wider text-secondaryText">
+              <i class="fa-solid fa-chart-simple text-accent"></i> Weekly Tasks Completed
+            </span>
+            <div class="flex-1 min-h-0 relative">
+              <canvas id="chart-weekly"></canvas>
+            </div>
+          </div>
+
+          <!-- Habit completion timeline line chart -->
+          <div class="card-style min-h-[300px] flex flex-col">
+            <span class="text-xs font-bold text-headingText font-heading mb-4 block flex items-center gap-1.5 uppercase tracking-wider text-secondaryText">
+              <i class="fa-solid fa-chart-line text-success"></i> Habit Completion %
+            </span>
+            <div class="flex-1 min-h-0 relative">
+              <canvas id="chart-habits"></canvas>
+            </div>
+          </div>
+
+          <!-- Focus Time distribution doughnut chart -->
+          <div class="card-style min-h-[300px] flex flex-col">
+            <span class="text-xs font-bold text-headingText font-heading mb-4 block flex items-center gap-1.5 uppercase tracking-wider text-secondaryText">
+              <i class="fa-solid fa-chart-pie text-accent"></i> Focus Time Distribution
+            </span>
+            <div class="flex-1 min-h-0 relative">
+              <canvas id="chart-focus"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- FOOTER credit labels -->
+    <footer class="bg-white border-t border-borderLight py-5 text-center text-[10px] text-secondaryText mt-12 uppercase tracking-wider font-semibold">
+      ProcastiKill &mdash; Your AI Productivity Companion
+    </footer>
+
+    <!-- ==================================================
+         SETTINGS MODAL (Gemini API Key configurator)
+         ================================================== -->
+    <div id="modal-settings" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 items-center justify-center p-4">
+      <div class="bg-white rounded-xl border border-borderLight shadow-fancy max-w-md w-full p-6 animate-fade-in">
+        <div class="flex items-center justify-between border-b border-borderLight pb-3 mb-4">
+          <h4 class="text-base font-bold font-heading text-headingText flex items-center gap-2">
+            <i class="fa-solid fa-key text-accent"></i> Core Key Settings
+          </h4>
+          <button onclick="window.closeSettingsModal()" class="text-secondaryText hover:text-headingText transition-colors cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <p class="text-xs text-secondaryText leading-relaxed mb-4 font-sans">
+          Paste your custom Gemini API key here to activate the <b>Gemini Flash Core</b>. Your key is stored strictly inside your local browser storage (<code class="bg-slate-100 p-0.5 rounded text-accent font-mono">localStorage</code>) and never touches external analytical pipelines.
+        </p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block font-heading font-semibold text-xs text-secondaryText mb-1.5 uppercase tracking-wider">Gemini API Key</label>
+            <input type="password" id="input-api-key" placeholder="AIzaSy..."
+              class="input-field">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+          <button onclick="window.closeSettingsModal()" class="btn-secondary text-xs py-2 px-4">Cancel</button>
+          <button onclick="window.saveSettings()" class="btn-primary text-xs py-2 px-4">Save Config</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================================================
+         GOOGLE CALENDAR CONNECT PROTOTYPE MODAL
+         ================================================== -->
+    <div id="modal-calendar" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 items-center justify-center p-4">
+      <div class="bg-white rounded-xl border border-borderLight shadow-fancy max-w-sm w-full p-6 animate-fade-in">
+        <div class="flex flex-col items-center text-center">
+          <div class="w-12 h-12 bg-indigo-50 border border-indigo-100 text-accent rounded-xl flex items-center justify-center text-xl mb-4 shadow-sm">
+            <i class="fa-brands fa-google"></i>
+          </div>
+          
+          <h4 class="text-base font-bold font-heading text-headingText mb-2">Connect Google Calendar</h4>
+          <p class="text-xs text-secondaryText leading-relaxed mb-6 font-sans">
+            Connecting Google Calendar allows ProcastiKill to read meeting blocks (Class, Lunch, Interviews) and automatically arrange study sprints outside of busy times.
+          </p>
+        </div>
+
+        <div class="flex justify-center gap-2">
+          <button onclick="window.closeCalendarModal()" class="btn-secondary text-xs py-2 px-4">Cancel</button>
+          <button onclick="window.confirmCalendarConnect()" class="btn-primary text-xs py-2 px-4 flex items-center gap-1">
+            <i class="fa-solid fa-calendar-check"></i> Grant Connection
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE ENTRY POINTS TO TRIGGER INITS -->
+    <script type="module">
+      import { switchTab, renderCrisesQueue, loadActiveCrisis, renderChatHistory } from '/src/main.js';
+      
+      // Bind module global hooks to window
+      window.switchTab = switchTab;
+      
+      document.addEventListener('DOMContentLoaded', () => {
+        // Run initial tab setup on loading
+        switchTab('dashboard');
+      });
+    </script>
+  </body>
+</html>
